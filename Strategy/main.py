@@ -3,37 +3,37 @@ from abc import ABC, abstractmethod
 from typing import List
 
 
-class Context():
+class Calculadora():
     """
     O Contexto define a interface de interesse aos clientes.
     """
 
-    def __init__(self, strategy: Strategy) -> None:
+    def __init__(self, operation: ElementIteration) -> None:
         """
         Normalmente, o Contexto aceita uma estratégia no construtor, mas 
         também fornece um setter para mudá-lo em tempo de execução.
         """
 
-        self._strategy = strategy
+        self._operation = operation
 
     @property
-    def strategy(self) -> Strategy:
+    def operation(self) -> ElementIteration:
         """
         O contexto mantém uma referência para um dos objetos de estrategia sem saber
         a classe concreta. Deverá trabalhar com todas através da interface Strategy.
         """
 
-        return self._strategy
+        return self._operation
 
-    @strategy.setter
-    def strategy(self, strategy: Strategy) -> None:
+    @operation.setter
+    def operation(self, operation: ElementIteration) -> None:
         """
         Normalmente, o contexto permite alterar o objeto Strategy em tempo de execução.
         """
 
-        self._strategy = strategy
+        self._operation = operation
 
-    def do_some_business_logic(self) -> None:
+    def evaluateData(self) -> None:
         """
         O contexto realiza o trabalho o enviando para o objeto Strategy em vez de implementar
         variações do algoritmo em si.
@@ -42,13 +42,13 @@ class Context():
         # ...
 
         print("Contexto: Realizando a operação matemática (não sei qual)")
-        result = self._strategy.do_algorithm((1, 2))
+        result = self._operation.execute((1, 2, 3, 4, 5))
         print(result)
 
         # ...
 
 
-class Strategy(ABC):
+class ElementIteration(ABC):
     """
     Esta interface declara operações comuns a todas variações do mesmo algoritmo.
     O contexto usa esta interface para chamar o algoritmo definido nas Contrete
@@ -56,7 +56,7 @@ class Strategy(ABC):
     """
 
     @abstractmethod
-    def do_algorithm(self, data: List):
+    def execute(self, data: List):
         pass
 
 
@@ -66,13 +66,13 @@ interface, tornando substituíveis.
 """
 
 
-class ConcreteStrategyA(Strategy):
-    def do_algorithm(self, data: List) -> int:
+class Summatiom(ElementIteration):
+    def execute(self, data: List) -> int:
         return sum(data)
 
 
-class ConcreteStrategyB(Strategy):
-    def do_algorithm(self, data: List) -> int:
+class Product(ElementIteration):
+    def execute(self, data: List) -> int:
         x =1 
         for i in data:
             x = x * i 
@@ -81,11 +81,14 @@ class ConcreteStrategyB(Strategy):
 
 if __name__ == "__main__":
     # O código do cliente seleciona uma estratégia e envia para o contexto.
-    context = Context(ConcreteStrategyA())
-    print("Cliente: Strategy está como operação de soma")
-    context.do_some_business_logic()
-    print()
+    context = Calculadora(Summatiom())
+    print("Cliente: Strategy está como operação de somatório")
+    context.evaluateData()
 
-    print("Cliente: Strategy está como operação de multiplicação")
-    context.strategy = ConcreteStrategyB()
-    context.do_some_business_logic()
+    print()
+    print()
+    
+   
+    print("Cliente: Strategy está como operação de produtório")
+    context.operation = Product()
+    context.evaluateData()
